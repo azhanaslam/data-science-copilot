@@ -145,3 +145,30 @@ if uploaded_file:
         )
 
         st.plotly_chart(fig, use_container_width=True)
+
+# Analyse dataset button
+    # adding a button
+    st.write("### 🤖 Copilot Analysis")
+
+    if st.button("Analyze Dataset", key="analyse_dataset_btn"):
+
+    # dataset summary
+        rows, cols = df.shape
+
+        st.success(
+            f"Dataset contains {rows:,} rows and {cols} columns."
+        )
+    # missing value percentages
+        missing_df = df.null_count()
+
+        for col in df.columns:
+
+            missing = missing_df[col][0]
+
+            if missing > 0:
+
+                pct = (missing / rows) * 100
+
+                st.warning(
+                    f"{col}: {missing} missing values ({pct:.1f}%)"
+                )
