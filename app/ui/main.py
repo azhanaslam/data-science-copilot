@@ -146,29 +146,37 @@ if uploaded_file:
 
         st.plotly_chart(fig, use_container_width=True)
 
-# Analyse dataset button
+# Analyse dataset button:- Missing values percentages and Data Quality Score will go hand in hand
     # adding a button
     st.write("### 🤖 Copilot Analysis")
-
     if st.button("Analyze Dataset", key="analyse_dataset_btn"):
 
     # dataset summary
         rows, cols = df.shape
-
-        st.success(
-            f"Dataset contains {rows:,} rows and {cols} columns."
-        )
-    # missing value percentages
+        st.success(f"Dataset contains {rows:,} rows and {cols} columns.")
+    
+    # missing value percentages table
         missing_df = df.null_count()
 
+    # Data Quality Score
+    # Simple Scoring Logic
+        # Initialisation
+        quality_score = 100
+        # Loop through columns
         for col in df.columns:
-
             missing = missing_df[col][0]
-
             if missing > 0:
-
                 pct = (missing / rows) * 100
+                quality_score -= pct * 0.2
+                st.warning(f"{col}: {missing} missing values ({pct:.1f}%)")
 
-                st.warning(
-                    f"{col}: {missing} missing values ({pct:.1f}%)"
-                )
+        quality_score = max(0, round(quality_score))
+
+        st.write("### 🏆 Data Quality Score")
+        if quality_score >= 80:
+            st.success(f"Data Quality Score: {quality_score}/100")
+        elif quality_score >= 60:
+            st.warning(f"Data Quality Score: {quality_score}/100")  
+        else:
+            st.error(f"Data Quality Score: {quality_score}/100")
+
